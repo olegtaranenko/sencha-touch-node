@@ -542,7 +542,7 @@ Ext.define('Ext.form.Panel', {
             failure : null
         }, options || {});
 
-        return me.fireAction('beforesubmit', [me, formValues, options, e], 'doBeforeSubmit');
+        return me.fireAction('beforesubmit', [me, formValues, options, e], 'doBeforeSubmit', null, null, 'after');
     },
 
     createSubmissionForm: function(form, values) {
