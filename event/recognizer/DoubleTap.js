@@ -12,7 +12,7 @@ Ext.define('Ext.event.recognizer.DoubleTap', {
     },
 
     config: {
-        maxDuration: 300
+        maxDuration: 3
     },
 
     handledEvents: ['singletap', 'doubletap'],
@@ -67,6 +67,7 @@ Ext.define('Ext.event.recognizer.DoubleTap', {
 
         this.lastTapTime = time;
         this.lastTarget = target;
+        if (target == lastTarget) return;
 
         if (lastTapTime) {
             duration = time - lastTapTime;

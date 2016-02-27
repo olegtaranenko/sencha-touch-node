@@ -1752,7 +1752,7 @@ Ext.define('Ext.data.Store', {
             if (Ext.isFunction(property)) {
                 filter = {filterFn: property};
             }
-            else if (Ext.isArray(property) || property.isFilter) {
+            else if (Ext.isArray(property) || property.isFilter || Ext.isString(property.property)) {
                 filter = property;
             }
             else {
@@ -1784,8 +1784,9 @@ Ext.define('Ext.data.Store', {
      * to test for filtering. Access field values using {@link Ext.data.Model#get}.
      * @param {Object} fn.id The ID of the Record passed.
      * @param {Object} scope (optional) The scope (`this` reference) in which the function is executed. Defaults to this Store.
+     * @param {Boolean} [forceRefresh] Force {@link #event-refresh refresh event} if ever nothing filtered.
      */
-    filterBy: function(fn, scope) {
+    filterBy: function(fn, scope, forceRefresh) {
         var me = this,
             data = me.data,
             ln = data.length;
@@ -1798,7 +1799,7 @@ Ext.define('Ext.data.Store', {
 
         this.fireEvent('filter', this, data, data.getFilters());
 
-        if (data.length !== ln) {
+        if (data.length !== ln || forceRefresh) {
             this.fireEvent('refresh', this, data);
         }
     },
@@ -1983,7 +1984,7 @@ Ext.define('Ext.data.Store', {
      * Finds the index of the first matching Record in this store by a specific field value.
      * @param {String} fieldName The name of the Record field to test.
      * @param {Object} value The value to match the field against.
-     * @param {Number} startIndex (optional) The index to start searching at.
+     * @param {Number} [startIndex] (optional) The index to start searching at.
      * @return {Number} The matched index or -1.
      */
     findExact: function(fieldName, value, startIndex) {

@@ -154,11 +154,23 @@ Ext.define('Ext.mixin.Selectable', {
         me.setLastFocused(null);
     },
 
+    onBeforeSelect: function () {
+        var args = ['beforeselect', this].concat(Array.prototype.slice.call(arguments));
+
+        return this.fireEvent.apply(this, args);
+    },
+
     // Provides differentiation of logic between MULTI, SIMPLE and SINGLE
     // selection modes.
     selectWithEvent: function(record) {
         var me = this,
             isSelected = me.isSelected(record);
+
+
+        if (me.onBeforeSelect(record) === false) {
+            return;
+        }
+
         switch (me.getMode()) {
             case 'MULTI':
             case 'SIMPLE':

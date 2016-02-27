@@ -256,6 +256,10 @@ Ext.define('Ext.data.JsonP', {
      * @param {Object} request The request
      */
     handleResponse: function(result, request){
+        if (request == null) {
+            request = result;
+            result = undefined;
+        }
         var success = true;
 
         if (request.timeout) {

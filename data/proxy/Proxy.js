@@ -255,10 +255,13 @@ Ext.define('Ext.data.proxy.Proxy', {
      * @param {Object} [options.scope] The scope in which to execute any callbacks (i.e. the `this` object inside
      * the callback, success and/or failure functions). Defaults to the proxy.
      *
+     * @param {Object} [options.params] External parameters for proxy fine tuning
+     *
      * @return {Ext.data.Batch} The newly created Batch
      */
     batch: function(options, /* deprecated */listeners) {
         var me = this,
+            params = options.params,
             useBatch = me.getBatchActions(),
             model = me.getModel(),
             batch,
@@ -294,18 +297,26 @@ Ext.define('Ext.data.proxy.Proxy', {
              records = options.operations[action];
              if (records) {
                  if (useBatch) {
-                     batch.add(new Ext.data.Operation({
+                     var operationOptions = {
                          action: action,
                          records: records,
                          model: model
-                     }));
+                     };
+                     if (params) {
+                         operationOptions.params = params;
+                     }
+                     batch.add(new Ext.data.Operation(operationOptions));
                  } else {
                      Ext.each(records, function(record) {
-                         batch.add(new Ext.data.Operation({
-                             action : action,
+                         var operationOptions = {
+                             action: action,
                              records: [record],
                              model: model
-                         }));
+                         };
+                         if (params) {
+                             operationOptions.params = params;
+                         }
+                         batch.add(new Ext.data.Operation(operationOptions));
                      });
                  }
              }

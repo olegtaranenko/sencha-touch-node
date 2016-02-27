@@ -339,6 +339,7 @@ Ext.define('Ext.util.Collection', {
     replace: function(oldKey, item) {
         var me = this,
             sorted = me.sorted,
+            presorted = me.presorted,
             filtered = me.filtered,
             filterable = me.mixins.filterable,
             items = me.items,
@@ -347,18 +348,20 @@ Ext.define('Ext.util.Collection', {
             map = me.map,
             returnItem = null,
             oldItemsLn = items.length,
+            subjectToOptimize = false,
             oldItem, index, newKey;
 
         if (arguments.length == 1) {
             item = oldKey;
             oldKey = newKey = me.getKey(item);
+            subjectToOptimize = true;
         } else {
             newKey = me.getKey(item);
         }
 
         oldItem = map[oldKey];
         if (typeof oldKey == 'undefined' || oldKey === null || typeof oldItem == 'undefined') {
-             return me.add(newKey, item);
+            return me.add(newKey, item);
         }
 
         me.map[newKey] = item;
@@ -367,13 +370,25 @@ Ext.define('Ext.util.Collection', {
         }
 
         if (sorted && me.getAutoSort()) {
-            Ext.Array.remove(items, oldItem);
-            Ext.Array.remove(keys, oldKey);
-            Ext.Array.remove(all, oldItem);
+            if (!subjectToOptimize) {
+                Ext.Array.remove(items, oldItem);
+                Ext.Array.remove(keys, oldKey);
+            } else {
+                var itemsFrom = items.indexOf(oldItem);
+            }
+            if (!presorted) {
+                Ext.Array.remove(all, oldItem);
+                all.push(item);
+                me.dirtyIndices = true;
+            } else {
+                var allTo = this.findInsertionIndex(all, item, undefined, true),
+                    allFrom = all.indexOf(item);
 
-            all.push(item);
-
-            me.dirtyIndices = true;
+                if (allTo !== allFrom) {
+                    move(all, allFrom, allTo);
+                    me.dirtyIndices = true;
+                }
+            }
 
             if (filtered && me.getAutoFilter()) {
                 // If the item is now filtered we check if it was not filtered
@@ -382,6 +397,12 @@ Ext.define('Ext.util.Collection', {
                     if (oldItemsLn !== items.length) {
                         me.length--;
                     }
+
+                    if (subjectToOptimize) {
+                        Ext.Array.remove(items, oldItem);
+                        Ext.Array.remove(keys, oldKey);
+                    }
+
                     return null;
                 }
                 // If the item was filtered, but now it is not anymore then we
@@ -392,10 +413,17 @@ Ext.define('Ext.util.Collection', {
                 }
             }
 
-            index = this.findInsertionIndex(items, item);
+            if (!subjectToOptimize) {
+                index = this.findInsertionIndex(items, item);
 
-            Ext.Array.splice(keys, index, 0, newKey);
-            Ext.Array.splice(items, index, 0, item);
+                Ext.Array.splice(keys, index, 0, newKey);
+                Ext.Array.splice(items, index, 0, item);
+            } else {
+                index = this.findInsertionIndex(items, item, undefined, true);
+
+                move(keys, itemsFrom, index);
+                move(items, itemsFrom, index);
+            }
         } else {
             if (filtered) {
                 if (me.getAutoFilter() && filterable.isFiltered.call(me, item)) {
@@ -427,6 +455,19 @@ Ext.define('Ext.util.Collection', {
         }
 
         return returnItem;
+
+
+        function move(array, from, to) {
+            if( to === from ) return;
+
+            var target = array[from];
+            var increment = to < from ? -1 : 1;
+
+            for(var k = from; k != to; k += increment){
+                array[k] = array[k + increment];
+            }
+            array[to] = target;
+        }
     },
 
     /**

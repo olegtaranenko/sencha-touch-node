@@ -379,11 +379,11 @@ Ext.define('Ext.form.Panel', {
     setRecord: function(record) {
         var me = this;
 
+        me._record = record;
+
         if (record && record.data) {
             me.setValues(record.data);
         }
-
-        me._record = record;
 
         return this;
     },

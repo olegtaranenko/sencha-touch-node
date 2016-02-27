@@ -129,7 +129,13 @@ Ext.define('Ext.field.Spinner', {
          */
         component: {
             disabled: true
-        }
+        },
+
+        /**
+         * @cfg {Boolean}
+         * `false` if allow to enter an arbitrary value via touch keyboard. `true` only using tap buttons
+         */
+        onlyTap: false
     },
 
     platformConfig: [{
@@ -210,6 +216,20 @@ Ext.define('Ext.field.Spinner', {
         return this.callParent([value]);
     },
 
+    applyOnlyTap: function(value) {
+        return Boolean(value);
+    },
+
+    updateOnlyTap: function(value) {
+        var component = this.getComponent();
+
+        component.setDisabled(value);
+        if (Ext.os.is.Android) {
+            component.setReadOnly(value);
+        }
+
+    },
+
     // @private
     createRepeater: function(el, fn) {
         var me = this,
@@ -262,6 +282,7 @@ Ext.define('Ext.field.Spinner', {
             direction = down ? 'down' : 'up',
             minValue = me.getMinValue(),
             maxValue = me.getMaxValue(),
+            cycle = me.getCycle(),
             value;
 
         if (down) {
@@ -272,21 +293,38 @@ Ext.define('Ext.field.Spinner', {
         }
 
         //if cycle is true, then we need to check fi the value hasn't changed and we cycle the value
-        if (me.getCycle()) {
-            if (originalValue == minValue && value < minValue) {
+        if (originalValue >= minValue && value < minValue) {
+            if (cycle) {
+                value = maxValue;
+            } else {
+                value = minValue;
+            }
+        }
+
+        if (originalValue <= maxValue && value > maxValue) {
+            if (cycle) {
+                value = minValue;
+            } else {
                 value = maxValue;
             }
+        }
 
-            if (originalValue == maxValue && value > maxValue) {
+        if (minValue <= maxValue) {
+            if (value < minValue) {
                 value = minValue;
+            }
+            if (value > maxValue) {
+                value = maxValue;
             }
         }
 
         me.setValue(value);
         value = me.getValue();
 
-        me.fireEvent('spin', me, value, direction);
-        me.fireEvent('spin' + direction, me, value);
+        if (value != originalValue) {
+            me.fireEvent('spin', me, value, direction);
+            me.fireEvent('spin' + direction, me, value);
+        }
     },
 
     /**
@@ -303,9 +341,9 @@ Ext.define('Ext.field.Spinner', {
         Ext.Component.prototype.setDisabled.apply(this, arguments);
     },
 
-    reset: function() {
-        this.setValue(this.getDefaultValue());
-    },
+//    reset: function() {
+//        this.setValue(this.getDefaultValue());
+//    },
 
 //    setValue: function(value){
 //        this.callSuper(arguments);

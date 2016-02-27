@@ -469,7 +469,7 @@ Ext.define('Ext.field.Text', {
         if(component && component.hasOwnProperty("originalValue")) {
             this.getComponent().originalValue = this.originalValue;
         }
-        this.reset();
+//        this.reset();
     },
 
     reset: function() {

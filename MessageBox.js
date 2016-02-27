@@ -152,10 +152,10 @@ Ext.define('Ext.MessageBox', {
     }],
 
     statics: {
-        OK    : {text: 'OK',     itemId: 'ok',  ui: 'action'},
-        YES   : {text: 'Yes',    itemId: 'yes', ui: 'action'},
-        NO    : {text: 'No',     itemId: 'no'},
-        CANCEL: {text: 'Cancel', itemId: 'cancel'},
+        OK    : {iconCls: 'tickCls',     itemId: 'ok',  ui: 'action'},
+        YES   : {iconCls: 'tickCls',    itemId: 'yes', ui: 'action'},
+        NO    : {iconCls: 'crossCls',    itemId: 'no'},
+        CANCEL: {iconCls: 'loopBackCls', itemId: 'cancel'},
 
         INFO    : Ext.baseCSSPrefix + 'msgbox-info',
         WARNING : Ext.baseCSSPrefix + 'msgbox-warning',
@@ -163,17 +163,17 @@ Ext.define('Ext.MessageBox', {
         ERROR   : Ext.baseCSSPrefix + 'msgbox-error',
 
         OKCANCEL: [
-            {text: 'Cancel', itemId: 'cancel'},
-            {text: 'OK',     itemId: 'ok',  ui : 'action'}
+            {iconCls: 'crossCls', itemId: 'cancel'},
+            {iconCls: 'tickCls',     itemId: 'ok',  ui : 'action'}
         ],
         YESNOCANCEL: [
-            {text: 'Cancel', itemId: 'cancel'},
-            {text: 'No',     itemId: 'no'},
-            {text: 'Yes',    itemId: 'yes', ui: 'action'}
+            {iconCls: 'loopBackCls', itemId: 'cancel'},
+            {iconCls: 'crossCls', itemId: 'no'},
+            {iconCls: 'tickCls', itemId: 'yes', ui: 'action'}
         ],
         YESNO: [
-            {text: 'No',  itemId: 'no'},
-            {text: 'Yes', itemId: 'yes', ui: 'action'}
+            {iconCls: 'crossCls', itemId: 'no'},
+            {iconCls: 'tickCls', itemId: 'yes', ui: 'action'}
         ]
     },
 

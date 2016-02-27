@@ -288,7 +288,13 @@
                     return this;
                 }
 
-                offset = (offset === 'after') ? 1 : -1;
+                if (offset === 'after') {
+                    offset = 1;
+                } else if (offset === 'before') {
+                    offset = 0;
+                } else {
+                    offset = -1;
+                }
             }
 
             index = Ext.Array.indexOf(defaultPreprocessors, relativeName);

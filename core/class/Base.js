@@ -239,11 +239,13 @@ var noArgs = [],
             for (name in members) {
                 if (members.hasOwnProperty(name)) {
                     member = members[name];
-                    //<debug>
                     if (typeof member == 'function') {
+                        member.$owner = this;
+                        member.$name = name;
+                        //<debug>
                         member.displayName = className + '.' + name;
+                        //</debug>
                     }
-                    //</debug>
                     this[name] = member;
 
                     if (!hasInheritableStatics[name]) {
@@ -505,6 +507,7 @@ var noArgs = [],
                     name = names[index];
 
                     if (members.hasOwnProperty(name)) {
+                        var inherited = false;
                         member = members[name];
 
                         if (typeof member == 'function' && !member.$className && member !== Ext.emptyFn) {
@@ -523,12 +526,22 @@ var noArgs = [],
                             member.$name = name;
 
                             previous = target[name];
+                            if (previous == null) {
+                                previous = this[name];
+                                if (previous) {
+                                    inherited = true;
+                                }
+                            }
                             if (previous) {
                                 member.$previous = previous;
                             }
                         }
 
-                        target[name] = member;
+                        if (!inherited) {
+                            target[name] = member;
+                        } else {
+                            this[name] = member;
+                        }
                     }
                 }
 
@@ -550,7 +563,7 @@ var noArgs = [],
             // This code is intentionally inlined for the least amount of debugger stepping
             return (method = this.callParent.caller) && (method.$previous ||
                   ((method = method.$owner ? method : method.caller) &&
-                        method.$owner.superclass.$class[method.$name])).apply(this, args || noArgs);
+                      method.$owner.superclass.self[method.$name])).apply(this, args || noArgs);
         },
 
         //<feature classSystem.mixins>
@@ -985,8 +998,14 @@ var noArgs = [],
          * @protected
          */
         callOverridden: function(args) {
-            var method = this.callOverridden.caller;
-            return method  && method.$previous.apply(this, args || noArgs);
+            var callOverriddenFn = this.callOverridden || this.prototype.callOverridden,
+                method = callOverriddenFn.caller,
+                previousMethod = method && method.$previous;
+
+            if (!previousMethod) {
+                return method.$return;
+            }
+            return previousMethod.apply(this, args || noArgs);
         },
 
         /**

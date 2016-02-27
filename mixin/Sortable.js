@@ -320,23 +320,35 @@ Ext.define('Ext.mixin.Sortable', {
      * given array based on the current sorters.
      * @param {Array} items The array that you want to insert the item into.
      * @param {Mixed} item The item that you want to insert into the items array.
+     * @param {Function} [sortFn] external sorting function
+     * @param {Boolean} containsItem Sencha's implementation assumes the item have to be excluded from the array before searching.
+     *      OT implementation allow avoid this kind of restriction. `true` assumes the item can be existed in the `items` array.
      * @return {Number} The index for the given item in the given array based on
      * the current sorters.
      */
-    findInsertionIndex: function(items, item, sortFn) {
+    findInsertionIndex: function(items, item, sortFn, containsItem) {
         var start = 0,
             end   = items.length - 1,
             sorterFn = sortFn || this.getSortFn(),
             middle,
             comparison;
 
-        while (start <= end) {
+        while (start < end || start === end && !containsItem) {
             middle = (start + end) >> 1;
-            comparison = sorterFn(item, items[middle]);
-            if (comparison >= 0) {
+
+            var middleItem = items[middle];
+
+            if (middleItem === item) {
+                start = middle;
+                break;
+            }
+            comparison = sorterFn(item, middleItem);
+            if (comparison > 0 || (!containsItem && comparison === 0)) {
                 start = middle + 1;
             } else if (comparison < 0) {
                 end = middle - 1;
+            } else if (containsItem && (start !== end)) {
+                start = middle + 1;
             }
         }
 

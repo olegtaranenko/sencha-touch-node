@@ -62,12 +62,14 @@ Ext.define('Ext.ProgressIndicator', {
             download: true
         },
 
+/*
         showAnimation: !Ext.browser.is.AndroidStock ? {
             type: 'slideIn',
             direction: "left",
             duration: 250,
             easing: 'ease-out'
         } : null,
+*/
 
         hideAnimation: !Ext.browser.is.AndroidStock ? {
             type: 'slideOut',

@@ -31,8 +31,10 @@ Ext.define('Ext.mixin.Mixin', {
                     if (beforeHooks) {
                         Ext.Object.each(beforeHooks, function(from, to) {
                             targetClass.override(to, function() {
-                                if (mixin[from].apply(this, arguments) !== false) {
-                                    return this.callOverridden(arguments);
+                                var fromFn = mixin[from] || mixin.self[from];
+                                if (fromFn.apply(this, arguments) !== false) {
+                                    var callOverriddenFn = this.callOverridden || this.prototype.callOverridden;
+                                    return callOverriddenFn.call(this, arguments);
                                 }
                             });
                         });
@@ -41,9 +43,11 @@ Ext.define('Ext.mixin.Mixin', {
                     if (afterHooks) {
                         Ext.Object.each(afterHooks, function(from, to) {
                             targetClass.override(to, function() {
-                                var ret = this.callOverridden(arguments);
+                                var callOverriddenFn = this.callOverridden || this.prototype.callOverridden,
+                                    ret = callOverriddenFn.call(this, arguments),
+                                    fromFn = mixin[from] || mixin.self[from];
 
-                                mixin[from].apply(this, arguments);
+                                fromFn.apply(this, arguments);
 
                                 return ret;
                             });

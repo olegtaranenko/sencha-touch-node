@@ -773,8 +773,9 @@ Ext.define('Ext.data.Model', {
      * Sets the given field to the given value, marks the instance as dirty.
      * @param {String/Object} fieldName The field to set, or an object containing key/value pairs.
      * @param {Object} value The value to set.
+     * @param {boolean} [quiet] Do not track modified state if true
      */
-    set: function(fieldName, value) {
+    set: function(fieldName, value, quiet) {
         var me = this,
             // We are using the fields map since it saves lots of function calls
             fieldMap = me.fields.map,
@@ -803,7 +804,7 @@ Ext.define('Ext.data.Model', {
                         me.beginEdit();
                     }
                     ++modifiedCount;
-                    me.set(key, fieldName[key]);
+                    me.set(key, fieldName[key], quiet);
                 }
             }
 
@@ -815,7 +816,7 @@ Ext.define('Ext.data.Model', {
                 modifiedCount += ln;
                 for (i = 0; i < ln; i++) {
                     field = modifiedFieldNames[i];
-                    me.set(field, fieldName[field]);
+                    me.set(field, fieldName[field], quiet);
                 }
             }
 
@@ -832,7 +833,7 @@ Ext.define('Ext.data.Model', {
             currentValue = me.data[fieldName];
             me.data[fieldName] = value;
 
-            if (field && !me.isEqual(currentValue, value)) {
+            if (field && !me.isEqual(currentValue, value) && !quiet) {
                 if (modified.hasOwnProperty(fieldName)) {
                     if (me.isEqual(modified[fieldName], value)) {
                         // the original value in me.modified equals the new value, so the
@@ -855,7 +856,7 @@ Ext.define('Ext.data.Model', {
                 }
             }
 
-            if (notEditing) {
+            if (notEditing && !quiet) {
                 me.afterEdit([fieldName], modified);
             }
         }

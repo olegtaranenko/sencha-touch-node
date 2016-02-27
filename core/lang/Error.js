@@ -4,6 +4,7 @@
 
 Ext.Error = {
     raise: function(object) {
-        throw new Error(object.msg);
+        var msg = object.msg || object;
+        throw new Error(msg);
     }
 };
