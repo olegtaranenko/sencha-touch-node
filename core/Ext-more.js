@@ -32,7 +32,7 @@
  * ###Further Reading
  * [Getting Started Guide](../../../getting_started/getting_started.html)
  */
-Ext.setVersion('touch', '2.4.2.571');
+Ext.setVersion('touch', '2.4.3.582');
 
 Ext.apply(Ext, {
     /**

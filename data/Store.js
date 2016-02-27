@@ -1022,6 +1022,31 @@ Ext.define('Ext.data.Store', {
     },
 
     clearData: function() {
+        //First we have to check if there are any associations defined on the model
+
+        var model = this.getModel(),
+            rec = this.getRange();
+
+        if (model) {
+            //get store names
+
+            if (model.associations) {
+                var items = model.associations.items,
+                    storeName;
+
+                for (var i = 0, iLen = items.length; i < iLen; i++) {
+                    storeName = items[i].getStoreName && items[i].getStoreName();
+
+                    if (storeName) {
+                        for (var n = 0, nLen = rec.length; n < nLen; n++) {
+                            rec[n][storeName].destroy();
+                            rec[n][storeName] = null;
+                        }
+                    }
+                }
+            }
+        }
+
         this.setData(null);
     },
 
