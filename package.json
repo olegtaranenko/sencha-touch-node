@@ -1,5 +1,5 @@
 {
-  "name": "node-touch",
+  "name": "sencha-touch",
   "description": "Run Sencha Touch on Node.js",
   "version": "0.1.0",
   "author": "Oleg Taranenko <olegtaranenko@gmail.com>",
