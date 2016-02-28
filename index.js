@@ -11,7 +11,9 @@ global.__defineGetter__('document', function() {
 });
 
 global.__defineGetter__('location', function() {
-	return '';
+	return {
+		href: ''
+	};
 });
 
 

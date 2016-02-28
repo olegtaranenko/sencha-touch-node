@@ -1,15 +1,23 @@
 {
   "name": "sencha-touch",
   "description": "Run Sencha Touch on Node.js",
-  "version": "0.1.1",
+  "version": "0.1.4",
   "author": "Oleg Taranenko <olegtaranenko@gmail.com>",
   "engine": [
     "node >=0.4.0"
   ],
+  "repository" : {
+    "type" : "git",
+    "url" : "git@github.com:olegtaranenko/sencha-touch-node.git"
+  },
   "main": "./index.js",
+  "scripts":{
+    "test":"mocha --reporter spec"
+  },
   "dependencies": {},
   "devDependencies": {},
   "engines": {
     "node": "*"
-  }
+  },
+  "license": "MIT"
 }

@@ -2,7 +2,7 @@ Marriage Sencha Touch and Node.js
 
 ## Installation
 
-As far as ExtJS and Sencha Touch can not be redistibuted with this module (see Licesnse section), you will not be able to install it from npm repository directly 
+As far as ExtJS and Sencha Touch can not be redistibuted with this module (see License section), you will not be able to install it from npm repository directly 
 
 However, installation via npm is easily done manually: 
 
